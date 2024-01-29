@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Asl sign WebApp">
+    <title>ASL sign detection web application</title>
+    <link rel="stylesheet" href="{{url_for('static',filename='dist/css/output.css')}}">
+    <script type="module" src="{{url_for('static', filename='../static/js/index.js')}}" defer></script>
+</head>
+<body>
+
+<div class="min-h-screen bg-gray-100 flex flex-col justify-between">
+  <header class="bg-gray-800 text-white p-4 text-center">
+    <h1 class="text-xl underline underline-offset-2">ASL sign detection web application</h1>
+  </header>
+
+  <main class="flex-grow">
+    <div class="flex flex-col md:flex-row items-stretch">
+      <div class="relative aspect-[16/9] w-full">
+        <video id="video" autoplay class="absolute top-0 left-0 w-full h-full"></video>
+        <canvas id="canvas" class="absolute top-0 left-0 w-full h-full"></canvas>
+      </div>
+
+      <div class="w-full sm:w-1/2 md:w-1/3 bg-white p-4">
+        <img src="../static/images/asl_signs.png" alt="ASL alphabet" class="w-full h-auto mb-4">
+        <div class="p-4 bg-gray-200 rounded">
+          <p class="underline text-3xl">Detected Objects:</p>
+          <br/>
+          <div id="predictedLetter" class="text-3xl text-red-700 text-center"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="bg-gray-800 text-white p-4 fixed inset-x-0 bottom-0">
+    <p class="text-center">© 2024 ASL sign detection web application</p>
+  </footer>
+</div>
+</body>
+</html>
