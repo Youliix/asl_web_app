@@ -1,11 +1,14 @@
+
 import pandas as pd
 import joblib
 
 from flask import render_template, request, jsonify, make_response, Blueprint
 
+from .db import save_image_content
+
 endpoint = Blueprint('endpoint', __name__)
 
-# model = joblib.load('./static/src/model/sklearn_xgb_v1.pkl')
+model = joblib.load('app/static/src/model/model_xgb.pkl')
 
 class_names = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y']
 
@@ -17,28 +20,27 @@ def home():
 
 @endpoint.route('/predict', methods=['POST'])
 def predict():
-    data = request.get_json()
-    if not data:
-        return make_response(jsonify({'error': 'No data provided'}), 400)
-    
-    for point in data['keypoints']:
+    try:
+        keypoints = request.form['keypoints']        
+        prediction = predict_class(keypoints)
+        img = request.files['image']
+        save_content(img, keypoints, prediction)
+    except Exception as e:
+        return make_response(jsonify({'error': e}), 500)
+    finally:
+        return jsonify({'letter': prediction})
+
+
+def predict_class(keypoints):
+    keypoints = eval(keypoints)
+    for point in keypoints:
         del point['z']
-
-    data['keypoints'] = [coord for point in data['keypoints'] for coord in point.values()]
-    df = pd.DataFrame([data['keypoints']])
-    # prediction = model.predict(df)
-    # prediction = class_names[prediction[0]]
-    
-    return jsonify({'letter': 'prediction'})
+    keypoints = [coord for point in keypoints for coord in point.values()]
+    df = pd.DataFrame([keypoints])
+    prediction = model.predict(df)
+    prediction = class_names[prediction[0]]
+    return prediction
 
 
-@endpoint.route('/save_content', methods=['POST'])
-def save_content():
-    data = request.get_json()
-    if not data:
-        return make_response(jsonify({'error': 'No data provided'}), 400)
-    
-    with open('./static/src/letter/' + data['letter'] + '.txt', 'w') as file:
-        file.write(data['content'])
-    
-    return jsonify({'message': 'Content saved successfully!'})
+def save_content(img, keypoints, prediction):
+    save_image_content(img, keypoints, prediction)

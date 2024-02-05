@@ -1,11 +1,13 @@
 import os
 import psycopg2
+import logging
 
 dbname = os.getenv('DATABASE_NAME')
 user = os.getenv('DATABASE_USER')
 password = os.getenv('DATABASE_PASSWORD')
-host = os.getenv('DATABASE_HOST_EXT')
+host = os.getenv('DATABASE_HOST')
 port = os.getenv('DATABASE_PORT')
+
 
 def get_db_connection():
     connection = None
@@ -21,6 +23,7 @@ def get_db_connection():
         print(f"Failed to establish a connection: {e}")
     finally:
         return connection
+
 
 def check_db_connection():
     try :
@@ -38,6 +41,7 @@ def check_db_connection():
             cur.close()
             connection.close()
 
+
 def db_init():
     try: 
         connection = get_db_connection()
@@ -51,4 +55,23 @@ def db_init():
         if(connection):
             cursor.close()
             connection.close()
-            print("PostgreSQL connection is closed")
+
+
+def save_image_content(img, keypoints, prediction):
+    try:
+        image = img.read()
+        keypoints = eval(keypoints)
+        for point in keypoints:
+            del point['z']
+        keypoints = [coord for point in keypoints for coord in point.values()]
+        connection = get_db_connection()
+        cursor = connection.cursor()
+        cursor.execute("INSERT INTO posts (label, image, key_points) VALUES (%s, %s, %s)", (prediction, image, keypoints,))
+        connection.commit()
+    except (Exception, psycopg2.Error) as error :
+        print ("Error while connecting to PostgreSQL", error)
+    finally:
+        if(connection):
+            cursor.close()
+            connection.close()
+

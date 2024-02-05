@@ -44,7 +44,7 @@ enableWebcam();
 let lastVideoTime = -1;
 let results = undefined;
 
-async function predictWebcam() {
+const predictWebcam = async () => {
 
   canvas.style.width = video.videoWidth;
   canvas.style.height = video.videoHeight;
@@ -54,14 +54,19 @@ async function predictWebcam() {
   let startTimeMs = performance.now();
   if (lastVideoTime !== video.currentTime) {
     lastVideoTime = video.currentTime;
-    results = handLandmarker.detectForVideo(video, startTimeMs);
+    results = await handLandmarker.detectForVideo(video, startTimeMs);
   }
+
   canvasCtx.save();
-  canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+  
   if (results.landmarks.length > 0) {
+
+    const dataUrl = canvas.toDataURL("image/jpeg", 1.0);
     const keypoints = results.landmarks[0];
-    drawHand(keypoints);
-    const prediction = await sendKeypointsToBackend(keypoints);
+    
+    drawHandKeypoints(keypoints);
+
+    const prediction = await sendKeypointsToBackend(keypoints, dataUrl);
     if (prediction && prediction.letter) {
       predictedLetter.innerHTML = prediction.letter;
     }
@@ -73,15 +78,18 @@ async function predictWebcam() {
   }
 }
 
-const sendKeypointsToBackend = async (keypoints) => {
+const sendKeypointsToBackend = async (keypoints, dataUrl) => {
+  
+  const formData = new FormData();  
+  const blob = new Blob([JSON.stringify(dataUrl)], { type: "image/jpeg" });
+
+  formData.append('keypoints', JSON.stringify(keypoints));
+  formData.append('image', blob, 'image.jpg');
+
   try {
-    const response = await fetch('http://localhost:5000/predict', {
+    const response = await fetch('http://127.0.0.1:8000/predict', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ keypoints : keypoints}),
-      mode: 'cors'
+      body: formData
     });
     if (!response.ok) {
       throw new Error('Error: ' + response.status);
@@ -89,11 +97,11 @@ const sendKeypointsToBackend = async (keypoints) => {
     const data = await response.json();
     return data;
   } catch (error) {
-    console.log(error);
+    console.log('Erreur :', error);
   }
 }
 
-function drawHand(keypoints) {
+const drawHandKeypoints = (keypoints) => {
   for (let i = 0; i < keypoints.length; i++) {
     const x = keypoints[i].x * canvas.width;
     const y = keypoints[i].y * canvas.height;
