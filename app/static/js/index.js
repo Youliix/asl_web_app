@@ -1,5 +1,6 @@
 import { FilesetResolver, HandLandmarker } from 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.9/+esm';
 
+let BASE_URL = 'https://asl-web-app.onrender.com';
 let handLandmarker;
 let runningMode = 'VIDEO';
 
@@ -34,22 +35,47 @@ const enableWebcam = async () => {
 
   navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
     video.srcObject = stream;
-    video.addEventListener("loadeddata", predictWebcam);
+    video.addEventListener("loadeddata", () => {
+      predictWebcam();
+    });
   });
-
 };
 
 enableWebcam();
+
+const adjustCanvasSize = () => {
+  // canvas.style.width = video.videoWidth;
+  // canvas.style.height = video.videoHeight;
+  // canvas.width = video.videoWidth;
+  // canvas.height = video.videoHeight;
+  
+  const aspectRatio = video.videoWidth / video.videoHeight;
+  const width = video.offsetWidth;
+  const height = width / aspectRatio;
+
+  canvas.style.width = `${width}px`;
+  canvas.style.height = `${height}px`;
+
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+};
+
+const drawHandKeypoints = (keypoints) => {
+  for (let i = 0; i < keypoints.length; i++) {
+    const x = keypoints[i].x * canvas.width;
+    const y = keypoints[i].y * canvas.height;
+    canvasCtx.beginPath();
+    canvasCtx.arc(x, y, 5 /* rayon */, 0, 2 * Math.PI);
+    canvasCtx.fillStyle = "red";
+    canvasCtx.fill();
+  }
+}
 
 let lastVideoTime = -1;
 let results = undefined;
 
 const predictWebcam = async () => {
-
-  canvas.style.width = video.videoWidth;
-  canvas.style.height = video.videoHeight;
-  canvas.width = video.videoWidth;
-  canvas.height = video.videoHeight;
+  adjustCanvasSize();
   
   let startTimeMs = performance.now();
   if (lastVideoTime !== video.currentTime) {
@@ -87,7 +113,8 @@ const sendKeypointsToBackend = async (keypoints, dataUrl) => {
   formData.append('image', blob, 'image.jpg');
 
   try {
-    const response = await fetch('https://asl-web-app.onrender.com/predict', {
+    // const response = await fetch(BASE_URL + '/predict', {
+    const response = await fetch('http://127.0.0.1:5000/predict', {
       method: 'POST',
       body: formData
     });
@@ -98,16 +125,5 @@ const sendKeypointsToBackend = async (keypoints, dataUrl) => {
     return data;
   } catch (error) {
     console.log('Erreur :', error);
-  }
-}
-
-const drawHandKeypoints = (keypoints) => {
-  for (let i = 0; i < keypoints.length; i++) {
-    const x = keypoints[i].x * canvas.width;
-    const y = keypoints[i].y * canvas.height;
-    canvasCtx.beginPath();
-    canvasCtx.arc(x, y, 5 /* rayon */, 0, 2 * Math.PI);
-    canvasCtx.fillStyle = "red";
-    canvasCtx.fill();
   }
 }
