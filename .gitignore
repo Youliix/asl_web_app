@@ -1,7 +1,6 @@
 .venv/
 node_modules/
 package-lock.json
-static/src/model/sklearn_xgb_v1.pkl
 
 *.pyc
 __pycache__/

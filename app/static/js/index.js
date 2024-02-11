@@ -33,7 +33,7 @@ const enableWebcam = async () => {
     video: true
   };
 
-  navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
+  await navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
     video.srcObject = stream;
     video.addEventListener("loadeddata", () => {
       predictWebcam();
@@ -113,8 +113,8 @@ const sendKeypointsToBackend = async (keypoints, dataUrl) => {
   formData.append('image', blob, 'image.jpg');
 
   try {
-    const response = await fetch(BASE_URL + '/predict', {
-    // const response = await fetch('http://127.0.0.1:5000/predict', {
+    // const response = await fetch(BASE_URL + '/predict', {
+    const response = await fetch('http://127.0.0.1:8000/predict', {
       method: 'POST',
       body: formData
     });

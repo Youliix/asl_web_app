@@ -1,4 +1,4 @@
-
+import logging
 import pandas as pd
 import joblib
 
@@ -8,9 +8,9 @@ from .db import save_image_content
 
 endpoint = Blueprint('endpoint', __name__)
 
-model = joblib.load('app/static/src/model/model_xgb.pkl')
+model = joblib.load('app/static/src/model/model_v1.pkl')
 
-class_names = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y']
+class_names = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
 
 
 @endpoint.route('/')
@@ -21,7 +21,7 @@ def home():
 @endpoint.route('/predict', methods=['POST'])
 def predict():
     try:
-        keypoints = request.form['keypoints']        
+        keypoints = request.form['keypoints']    
         prediction = predict_class(keypoints)
         img = request.files['image']
         save_content(img, keypoints, prediction)
