@@ -11,7 +11,7 @@ endpoint = Blueprint('endpoint', __name__)
 
 model = joblib.load('app/static/src/model/work/model_xgb_xyz_angles_dist_xy.pkl')
 
-class_names = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y']
+class_names = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
 
 @endpoint.route('/')
 def home():
@@ -34,6 +34,8 @@ def predict():
 
 
 def predict_class(features):
+    keypoints = features['keypoints']
+    logging.warning(keypoints)
     angles = features['angles']
     distances = features['distances']
     angle_dict = {f'angle_{i}': value for i, value in enumerate(angles)}
@@ -74,5 +76,13 @@ def calculate_features_from_wrist(hand_landmarks):
         specific_distance = np.linalg.norm(point_a - point_b)
         # Append the specific distance with a descriptive key
         distances.append(specific_distance)
-    return {'angles': angles, 'distances': distances}
+    logging.warning(hand_landmarks)
+    keypoint_indices = [0, 4, 8, 12, 16, 20]
+    results = {}
+    for index in keypoint_indices:
+        print(index, hand_landmarks[0]['x'])
+        results[f'x_{index}'] = [x[index]['x'] for x in hand_landmarks]
+        results[f'y_{index}'] = [x[index]['y'] for x in hand_landmarks]
+    
+    return {'angles': angles, 'distances': distances, 'keypoints': results}
 
