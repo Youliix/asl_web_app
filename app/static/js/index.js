@@ -86,7 +86,7 @@ const predictWebcam = async () => {
   canvasCtx.save();
   
   if (results.landmarks.length > 0) {
-
+    console.log(results);
     const dataUrl = canvas.toDataURL("image/jpeg", 1.0);
     const keypoints = results.landmarks[0];
     
@@ -114,7 +114,7 @@ const sendKeypointsToBackend = async (keypoints, dataUrl) => {
 
   try {
     // const response = await fetch(BASE_URL + '/predict', {
-    const response = await fetch('http://127.0.0.1:8000/predict', {
+    const response = await fetch('http://127.0.0.1:5000/predict', {
       method: 'POST',
       body: formData
     });
