@@ -46,7 +46,7 @@ def db_init():
     try: 
         connection = get_db_connection()
         cursor = connection.cursor()
-        cursor.execute(open("app/database_schema.sql", "r").read())
+        cursor.execute(open("app/static/db/database_schema.sql", "r").read())
         connection.commit()
         print("Database has been initialized")
     except (Exception, psycopg2.Error) as error :
@@ -60,13 +60,10 @@ def db_init():
 def save_image_content(img, keypoints, prediction):
     try:
         image = img.read()
-        keypoints = eval(keypoints)
-        for point in keypoints:
-            del point['z']
         keypoints = [coord for point in keypoints for coord in point.values()]
         connection = get_db_connection()
         cursor = connection.cursor()
-        cursor.execute("INSERT INTO posts (label, image, key_points) VALUES (%s, %s, %s)", (prediction, image, keypoints,))
+        cursor.execute("INSERT INTO posts (label, image, keypoints) VALUES (%s, %s, %s)", (prediction, image, keypoints))
         connection.commit()
     except (Exception, psycopg2.Error) as error :
         print ("Error while connecting to PostgreSQL", error)
@@ -74,4 +71,3 @@ def save_image_content(img, keypoints, prediction):
         if(connection):
             cursor.close()
             connection.close()
-

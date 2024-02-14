@@ -1,4 +1,3 @@
-import logging
 import pandas as pd
 import joblib
 import numpy as np
@@ -9,9 +8,9 @@ from .db import save_image_content
 
 endpoint = Blueprint('endpoint', __name__)
 
-model = joblib.load('app/static/src/model/work/model_xgb_xyz_angles_dist_xy.pkl')
+model = joblib.load('app/static/src/model/models/model_xgb_full_angles_5d_6p.pkl')
 
-class_names = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+class_names = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y']
 
 @endpoint.route('/')
 def home():
@@ -25,8 +24,8 @@ def predict():
         keypoints = eval(keypoints)
         keypoints_features = calculate_features_from_wrist(keypoints)
         prediction = predict_class(keypoints_features)
-        # img = request.files['image']
-        # save_content(img, keypoints, prediction)
+        img = request.files['image']
+        save_content(img, keypoints, prediction)
     except Exception as e:
         return make_response(jsonify({'error': e}), 500)
     finally:
@@ -35,12 +34,11 @@ def predict():
 
 def predict_class(features):
     keypoints = features['keypoints']
-    logging.warning(keypoints)
     angles = features['angles']
     distances = features['distances']
     angle_dict = {f'angle_{i}': value for i, value in enumerate(angles)}
     distance_dict = {f'dist_{i}': value for i, value in enumerate(distances)}
-    data = {**angle_dict, **distance_dict}
+    data = {**keypoints, **angle_dict, **distance_dict}
     s = pd.DataFrame([data])
     prediction = model.predict(s)
     result = class_names[prediction[0]]
@@ -56,33 +54,34 @@ def calculate_features_from_wrist(hand_landmarks):
     angles = []
     distances = []
 
-    for i in range(1, len(hand_landmarks)):  # Skip the wrist itself
+    for i in range(1, len(hand_landmarks)):
         keypoint = np.array([hand_landmarks[i]['x'], hand_landmarks[i]['y']])
         
-        # Calculate angle
         vector = keypoint - wrist
-        angle_rad = np.arctan2(vector[1], vector[0])  # Angle in radians
-        angle_deg = np.degrees(angle_rad)  # Convert to degrees
+        angle_rad = np.arctan2(vector[1], vector[0])
+        angle_deg = np.degrees(angle_rad)
         angles.append(angle_deg)
         
-        # Calculate distance
-        distance = np.linalg.norm(vector)  # Euclidean distance
+        distance = np.linalg.norm(vector)
         distances.append(distance)
-    # print(angles, distances)
-        specific_keypoints_pairs = [(4, 8), (8, 12), (12, 16), (16, 20), (4,17), (3, 5), (4,20), (4,12), (4,16)]
+        specific_keypoints_pairs = [(4, 8), (8, 12), (12, 16), (16, 20), (4,17)]
     for pair in specific_keypoints_pairs:
         point_a = np.array([hand_landmarks[pair[0]]['x'], hand_landmarks[pair[0]]['y']])
         point_b = np.array([hand_landmarks[pair[1]]['x'], hand_landmarks[pair[1]]['y']])
         specific_distance = np.linalg.norm(point_a - point_b)
-        # Append the specific distance with a descriptive key
         distances.append(specific_distance)
-    logging.warning(hand_landmarks)
-    keypoint_indices = [0, 4, 8, 12, 16, 20]
-    results = {}
-    for index in keypoint_indices:
-        print(index, hand_landmarks[0]['x'])
-        results[f'x_{index}'] = [x[index]['x'] for x in hand_landmarks]
-        results[f'y_{index}'] = [x[index]['y'] for x in hand_landmarks]
     
-    return {'angles': angles, 'distances': distances, 'keypoints': results}
+    keypoint_indices = [0, 4, 8, 12, 16, 20]
+    filtered_keypoints = {f'kp_{i}': hand_landmarks[i] for i in keypoint_indices if i < len(hand_landmarks)}
+    for kp in filtered_keypoints.values():
+        if 'z' in kp: del kp['z']
 
+    keypoints_features = {}
+    for i in keypoint_indices:
+        kp_key = f'kp_{i}'
+        if kp_key in filtered_keypoints:
+            keypoints_features[f'x_{i}'] = filtered_keypoints[kp_key].get('x', None)
+            keypoints_features[f'y_{i}'] = filtered_keypoints[kp_key].get('y', None)
+    keypoints = keypoints_features
+
+    return {'angles': angles, 'distances': distances, 'keypoints': keypoints}
