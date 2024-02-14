@@ -5,12 +5,12 @@ endpoint = Blueprint('endpoint', __name__)
 
 @endpoint.route('/')
 def home():
-    main_template = 'home.html'
+    main_template = './content/home.html'
     return render_template('index.html', main_template=main_template)
 
 @endpoint.route('/predict', methods=['GET'])
 def get_predict():
-    main_template = 'detection.html'
+    main_template = './content/detection.html'
     return render_template('index.html', main_template=main_template)
 
 @endpoint.route('/predict', methods=['POST'])

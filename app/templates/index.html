@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Application de détection de signes ASL (American Sign Language)">
-    <title>Application de détection de signes ASL (American Sign Language)</title>
+    <title>ASL Web App</title>
     <link rel="stylesheet" href="{{url_for('static',filename='../static/dist/css/output.css')}}">
 </head>
-<div class="h-screen w-full">
-  {% include 'header.html' %}
+<div class="flex flex-col h-screen">
+  {% include './common/header.html' %}
   {% include main_template %}
-  {% include 'footer.html' %}
+  {% include './common/footer.html' %}
 </div>
 </body>
 </html>
