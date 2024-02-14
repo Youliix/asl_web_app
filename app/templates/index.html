@@ -1,41 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Asl sign WebApp">
-    <title>ASL sign detection web application</title>
+    <meta name="description" content="Application de détection de signes ASL (American Sign Language)">
+    <title>Application de détection de signes ASL (American Sign Language)</title>
     <link rel="stylesheet" href="{{url_for('static',filename='../static/dist/css/output.css')}}">
-    <script type="module" src="{{url_for('static', filename='../static/js/index.js')}}" defer></script>
 </head>
-<body>
-
-<div class="min-h-screen bg-gray-100 flex flex-col justify-between">
-  <header class="bg-gray-800 text-white p-4 text-center">
-    <h1 class="text-xl underline underline-offset-2">ASL sign detection web application</h1>
-  </header>
-
-  <main class="flex-grow">
-    <div class="flex flex-col md:flex-row items-stretch">
-      <div class="relative aspect-[16/9] w-full">
-        <video id="video" autoplay class="absolute top-0 left-0 w-full"></video>
-        <canvas id="canvas" class="absolute top-0 left-0 w-full h-full"></canvas>
-      </div>
-
-      <div class="w-full md:w-1/3 bg-white p-4">
-        <img src="../static/images/asl_signs_old.png" alt="ASL alphabet" class="w-full h-auto mb-4">
-        <div class="bg-gray-300 rounded min-h-48 border border-violet-500 flex flex-col justify-start items-center">
-          <p class="underline lg:text-2xl md:text-lg sm:text-base text-sm text-center text-violet-600  mt-3">Lettre identifiée :</p>
-          <br/>
-          <div id="predictedLetter" class="text-3xl text-blue-700 text-center  mt-3"></div>
-        </div>
-      </div>
-    </div>
-  </main>
-
-  <footer class="bg-gray-800 text-white p-4 fixed inset-x-0 bottom-0">
-    <p class="text-center">© 2024 ASL sign detection web application</p>
-  </footer>
+<div class="h-screen w-full">
+  {% include 'header.html' %}
+  {% include main_template %}
+  {% include 'footer.html' %}
 </div>
 </body>
 </html>
