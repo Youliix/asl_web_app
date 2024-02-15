@@ -4,6 +4,7 @@ let BASE_URL = 'https://asl-web-app.onrender.com';
 let handLandmarker;
 let runningMode = 'VIDEO';
 let predictedLetter = '';
+const spinner = document.querySelector('.fa-spinner');
 
 const createHandLandmarker = async () => {
   const vision = await FilesetResolver.forVisionTasks('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0/wasm');
@@ -26,7 +27,19 @@ let webcamRunning = false;
 const video = document.getElementById('video');
 const canvas = document.getElementById('canvas');
 const canvasCtx = canvas.getContext('2d');
-// const predictedLetter = document.getElementById("predictedLetter");
+
+const adjustCanvasSize = () => {  
+  if (video.videoWidth > 0 && video.videoHeight > 0) {
+    const aspectRatio = video.videoWidth / video.videoHeight;
+    const displayWidth = video.offsetWidth;
+    const displayHeight = displayWidth / aspectRatio;
+    canvas.width = displayWidth;
+    canvas.height = displayHeight;
+  }
+  console.log('Canvas size:', canvas.width, canvas.height);
+};
+
+window.addEventListener('resize', adjustCanvasSize);
 
 const enableWebcam = async () => {
   webcamRunning = true;
@@ -38,26 +51,13 @@ const enableWebcam = async () => {
   await navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
     video.srcObject = stream;
     video.addEventListener("loadeddata", () => {
+      if (video.readyState >= 3) {
+        spinner.style.display = 'none';
+      }
+      adjustCanvasSize();
       predictWebcam();
     });
   });
-};
-
-const adjustCanvasSize = () => {
-  // canvas.style.width = video.videoWidth;
-  // canvas.style.height = video.videoHeight;
-  // canvas.width = video.videoWidth;
-  // canvas.height = video.videoHeight;
-  
-  const aspectRatio = video.videoWidth / video.videoHeight;
-  const width = video.offsetWidth;
-  const height = width / aspectRatio;
-
-  canvas.style.width = `${width}px`;
-  canvas.style.height = `${height}px`;
-
-  canvas.width = video.videoWidth;
-  canvas.height = video.videoHeight;
 };
 
 const drawBoundingBox = (keypoints) => {
@@ -75,12 +75,9 @@ const drawBoundingBox = (keypoints) => {
     maxY = Math.max(maxY, y);
   }
 
-  // Draw bounding box
-  canvasCtx.strokeStyle = 'green'; // Couleur de la bordure
-  canvasCtx.lineWidth = 4; // Épaisseur de la bordure
+  canvasCtx.strokeStyle = 'green';
+  canvasCtx.lineWidth = 4;
   canvasCtx.strokeRect(minX, minY, maxX - minX, maxY - minY);
-
-  // Draw the label in the top right corner of the bounding box
   if (predictedLetter) {
     canvasCtx.font = '18px Arial';
     canvasCtx.fillStyle = 'yellow';
@@ -90,58 +87,44 @@ const drawBoundingBox = (keypoints) => {
 }
 
 const drawHandKeypoints = (keypoints) => {
-  canvasCtx.fillStyle = "red"; // Couleur des keypoints
+  canvasCtx.fillStyle = "blue"; 
   for (let i = 0; i < keypoints.length; i++) {
     const x = keypoints[i].x * canvas.width;
     const y = keypoints[i].y * canvas.height;
     canvasCtx.beginPath();
-    canvasCtx.arc(x, y, 5 /* rayon */, 0, 2 * Math.PI);
+    canvasCtx.arc(x, y, 5, 0, 2 * Math.PI);
     canvasCtx.fill();
   }
-
-  // Draw the bounding box around the hand
   drawBoundingBox(keypoints);
 }
-
-// const drawHandKeypoints = (keypoints) => {
-//   for (let i = 0; i < keypoints.length; i++) {
-//     const x = keypoints[i].x * canvas.width;
-//     const y = keypoints[i].y * canvas.height;
-//     canvasCtx.beginPath();
-//     canvasCtx.arc(x, y, 5 /* rayon */, 0, 2 * Math.PI);
-//     canvasCtx.fillStyle = "red";
-//     canvasCtx.fill();
-//   }
-// }
 
 let lastVideoTime = -1;
 let results = undefined;
 
 const predictWebcam = async () => {
-  adjustCanvasSize();
-  
+
   let startTimeMs = performance.now();
   if (lastVideoTime !== video.currentTime) {
     lastVideoTime = video.currentTime;
     results = await handLandmarker.detectForVideo(video, startTimeMs);
   }
 
-  canvasCtx.save();
-  
-  if (results.landmarks.length > 0) {
+  if (results && results.landmarks && results.landmarks.length > 0) {
     const dataUrl = canvas.toDataURL("image/jpeg", 1.0);
     const keypoints = results.landmarks[0];
-
     const prediction = await sendKeypointsToBackend(keypoints, dataUrl);
+    
     if (prediction && prediction.letter) {
+      // canvasCtx.save();
       predictedLetter = prediction.letter;
       drawHandKeypoints(keypoints);
+      // canvasCtx.restore();
     }
-  }
-  canvasCtx.restore();
 
+  }
   if (webcamRunning === true) {
     window.requestAnimationFrame(predictWebcam);
+    context.clearRect(0, 0, canvas.width, canvas.height);
   }
 }
 

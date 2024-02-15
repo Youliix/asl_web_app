@@ -20,8 +20,8 @@ def post_predict():
         keypoints = eval(keypoints)
         keypoints_features = calculate_features_from_wrist(keypoints)
         prediction = predict_class(keypoints_features)
-        img = request.files['image']
-        save_content(img, keypoints, prediction)
+        # img = request.files['image']
+        # save_content(img, keypoints, prediction)
     except Exception as e:
         return make_response(jsonify({'error': e}), 500)
     finally:

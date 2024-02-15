@@ -1,8 +1,9 @@
-<main class="flex-1 overflow-auto flex flex-wrap justify-around items-center w-full">
-  <img class="aspect-[16/9] w-full md:w-1/3 lg:w-1/4 p-2" src="../static/images/asl_signs_old.png"/>
-  <div class="relative aspect-[16/9] w-full md:w-1/2 p-2">
-    <video id="video" autoplay class="absolute top-0 left-0 w-full h-full"></video>
-    <canvas id="canvas" class="absolute top-0 left-0 w-full h-full"></canvas>
+<main class="flex flex-wrap justify-around items-center md:mt-8 mb-8">
+  <img class="aspect-[16/9] w-full md:w-1/3 p-2" src="../static/images/asl_signs_old.png"/>
+  <div class="md:w-1/2 md:max-w-[480px] min-w-[360px] md:min-h-[360px] min-h-[280px] relative mt-2 md:mt-0 overflow-y-auto">
+    <i class="fas fa-spinner fa-spin text-4xl text-gray-500 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></i>
+    <video id="video" autoplay class="absolute md:max-w-[480px] md:h-[360px] left-1/2 transform -translate-x-1/2"></video>
+    <canvas id="canvas" class="absolute left-1/2 transform -translate-x-1/2"></canvas>
   </div>
 </main>
 

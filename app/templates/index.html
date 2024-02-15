@@ -6,8 +6,10 @@
     <meta name="description" content="Application de détection de signes ASL (American Sign Language)">
     <title>ASL Web App</title>
     <link rel="stylesheet" href="{{url_for('static',filename='../static/dist/css/output.css')}}">
-</head>
-<div class="flex flex-col h-screen">
+    <link rel="icon" href="{{ url_for('static', filename='./images/sign.png') }}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  </head>
+<div class="flex flex-col h-screen md:min-h-screen">
   {% include './common/header.html' %}
   {% include main_template %}
   {% include './common/footer.html' %}
