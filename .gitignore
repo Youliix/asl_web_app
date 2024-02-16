@@ -12,3 +12,5 @@ build/
 .env
 
 app/static/src/model/dataset/
+
+app/static/src/model/work/.neptune/

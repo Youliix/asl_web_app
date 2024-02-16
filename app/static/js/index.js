@@ -118,8 +118,10 @@ const predictWebcam = async () => {
     const dataUrl = canvas.toDataURL("image/jpeg", 1.0);
     keypoints = results.landmarks[0];
     prediction = await sendKeypointsToBackend(keypoints, dataUrl);
-    predictedLetter = prediction.letter;
-    drawCanvasContext(keypoints);
+    if(prediction && prediction.letter !== '') {
+      predictedLetter = prediction.letter;
+      drawCanvasContext(keypoints);
+    }
   } else {
     canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
   }
@@ -148,6 +150,7 @@ const sendKeypointsToBackend = async (keypoints, dataUrl) => {
     const data = await response.json();
     return data;
   } catch (error) {
+    canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
     console.log("Erreur :", error);
   }
 };
