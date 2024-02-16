@@ -137,8 +137,8 @@ const sendKeypointsToBackend = async (keypoints, dataUrl) => {
   formData.append("image", blob, "image.jpg");
 
   try {
-    // const response = await fetch(BASE_URL + '/predict', {
-    const response = await fetch("/predict", {
+    const response = await fetch(BASE_URL + '/predict', {
+    // const response = await fetch("/predict", {
       method: "POST",
       body: formData,
     });
@@ -146,7 +146,6 @@ const sendKeypointsToBackend = async (keypoints, dataUrl) => {
       throw new Error("Error: " + response.status);
     }
     const data = await response.json();
-    console.log(data);
     return data;
   } catch (error) {
     console.log("Erreur :", error);
