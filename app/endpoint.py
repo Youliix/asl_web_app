@@ -1,5 +1,5 @@
 from flask import render_template, request, jsonify, make_response, Blueprint
-from .detect import calculate_features_from_wrist, predict_class, save_content
+from .detect import calculate_features_from_wrist, predict_class_from_features, save_content
 
 endpoint = Blueprint('endpoint', __name__)
 
@@ -19,7 +19,7 @@ def post_predict():
         keypoints = request.form['keypoints']   
         keypoints = eval(keypoints)
         keypoints_features = calculate_features_from_wrist(keypoints)
-        prediction = predict_class(keypoints_features)
+        prediction = predict_class_from_features(keypoints_features)
         img = request.files['image']
         save_content(img, keypoints, prediction)
     except Exception as e:

@@ -11,6 +11,6 @@ build/
 
 .env
 
-app/static/src/model/dataset/
-
+app/static/src/model/work/dataset/
 app/static/src/model/work/.neptune/
+app/static/src/model/work/asl-alphabet.zip
