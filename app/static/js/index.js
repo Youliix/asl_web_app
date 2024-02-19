@@ -139,8 +139,8 @@ const sendKeypointsToBackend = async (keypoints, dataUrl) => {
   formData.append("image", blob, "image.jpg");
 
   try {
-    // const response = await fetch(BASE_URL + '/predict', {
-    const response = await fetch("/predict", {
+    const response = await fetch(BASE_URL + '/predict', {
+    // const response = await fetch("/predict", {
       method: "POST",
       body: formData,
     });
