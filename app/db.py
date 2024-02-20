@@ -1,6 +1,5 @@
 import os
 import psycopg2
-import logging
 
 dbname = os.getenv('DATABASE_NAME')
 user = os.getenv('DATABASE_USER')
@@ -59,11 +58,11 @@ def db_init():
 
 def save_image_content(img, keypoints, prediction):
     try:
-        image = img.read()
+        img = img.read()
         keypoints = [coord for point in keypoints for coord in point.values()]
         connection = get_db_connection()
         cursor = connection.cursor()
-        cursor.execute("INSERT INTO posts (label, image, keypoints) VALUES (%s, %s, %s)", (prediction, image, keypoints))
+        cursor.execute("INSERT INTO posts (label, image, keypoints) VALUES (%s, %s, %s)", (prediction, img, keypoints))
         connection.commit()
     except (Exception, psycopg2.Error) as error :
         print ("Error while connecting to PostgreSQL", error)

@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS posts;
+-- DROP TABLE IF EXISTS posts;
 
 -- Create table if not exists
 CREATE TABLE IF NOT EXISTS posts (
