@@ -5,7 +5,7 @@ import logging
 
 from .db import save_image_content
 
-model = joblib.load("app/static/src/model/work/models/model_xgb.pkl")
+model = joblib.load("app/static/src/model/work/models/model_xgb_v2.pkl")
 
 
 class_names = [
