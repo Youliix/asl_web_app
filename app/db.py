@@ -62,7 +62,11 @@ def save_image_content(img, keypoints, prediction):
         keypoints = [coord for point in keypoints for coord in point.values()]
         connection = get_db_connection()
         cursor = connection.cursor()
-        cursor.execute("INSERT INTO posts (label, image, keypoints) VALUES (%s, %s, %s)", (prediction, img, keypoints))
+        cursor.execute("INSERT INTO images (image) VALUES (%s)", (img,))
+        connection.commit()
+        cursor.execute("SELECT id FROM images WHERE image = %s", (img,))
+        image_id = cursor.fetchone()
+        cursor.execute("INSERT INTO keypoints (image_id, label, keypoints) VALUES (%s, %s, %s)", (image_id, prediction, keypoints,))
         connection.commit()
     except (Exception, psycopg2.Error) as error :
         print ("Error while connecting to PostgreSQL", error)
