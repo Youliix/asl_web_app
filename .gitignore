@@ -15,3 +15,4 @@ app/static/src/model/work/dataset/
 app/static/src/model/work/.neptune/
 app/static/src/model/work/asl-alphabet.zip
 app/static/src/model/work/kaggle/
+app/static/src/model/work/dataset_csv/

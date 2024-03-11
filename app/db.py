@@ -25,45 +25,42 @@ def get_db_connection():
 
 
 def check_db_connection():
+    connection = get_db_connection()
+    cursor = connection.cursor()
     try :
-        connection = get_db_connection()
-        cur = connection.cursor()
-        cur.execute("SELECT version();")
-        version = cur.fetchone()
+        cursor.execute("SELECT version();")
+        version = cursor.fetchone()
         print(version)
-        cur.close()
+        cursor.close()
         connection.close()
     except (Exception, psycopg2.Error) as error :
         print ("Error while connecting to PostgreSQL", error)
     finally:
-        if(connection):
-            cur.close()
-            connection.close()
+        cursor.close()
+        connection.close()
 
 
 def db_init():
+    connection = get_db_connection()
+    cursor = connection.cursor()
     try: 
-        connection = get_db_connection()
-        cursor = connection.cursor()
         cursor.execute(open("app/static/db/database_schema.sql", "r").read())
         connection.commit()
         print("Database has been initialized")
     except (Exception, psycopg2.Error) as error :
         print ("Error while connecting to PostgreSQL", error)
     finally:
-        if(connection):
-            cursor.close()
-            connection.close()
+        cursor.close()
+        connection.close()
 
 
 def save_image_content(img, keypoints, prediction):
+    connection = get_db_connection()
+    cursor = connection.cursor()
     try:
         img = img.read()
         keypoints = [coord for point in keypoints for coord in point.values()]
-        connection = get_db_connection()
-        cursor = connection.cursor()
         cursor.execute("INSERT INTO images (image) VALUES (%s)", (img,))
-        connection.commit()
         cursor.execute("SELECT id FROM images WHERE image = %s", (img,))
         image_id = cursor.fetchone()
         cursor.execute("INSERT INTO keypoints (image_id, label, keypoints) VALUES (%s, %s, %s)", (image_id, prediction, keypoints,))
@@ -71,6 +68,5 @@ def save_image_content(img, keypoints, prediction):
     except (Exception, psycopg2.Error) as error :
         print ("Error while connecting to PostgreSQL", error)
     finally:
-        if(connection):
-            cursor.close()
-            connection.close()
+        cursor.close()
+        connection.close()
