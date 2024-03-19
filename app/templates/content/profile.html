@@ -1,0 +1,100 @@
+<main class="flex flex-wrap justify-around items-center w-full h-full">
+  {% set user_data = user %}
+  <form
+    id="profile-form"
+    class="max-w-md min-w-80 mx-auto bg-white rounded-lg overflow-hidden shadow-md p-8 border-4 border-gray-800"
+  >
+    <h1 class="text-2xl font-bold mb-4 text-center">Profile</h1>
+
+    <div class="mb-4">
+      <label
+        for="id_firstname"
+        class="block text-gray-700 text-sm font-bold mb-2"
+        >Prénom :</label
+      >
+      <input
+        type="text"
+        id="id_firstname"
+        name="firstname"
+        required
+        class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+        value="{{user_data.0}}"
+      />
+    </div>
+
+    <div class="mb-4">
+      <label
+        for="id_lastname"
+        class="block text-gray-700 text-sm font-bold mb-2"
+        >Nom :</label
+      >
+      <input
+        type="text"
+        id="id_lastname"
+        name="lastname"
+        required
+        class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+        value="{{user_data.1}}"
+      />
+    </div>
+
+    <div class="mb-4">
+      <label
+        for="id_rgpd_right"
+        class="block text-gray-700 text-sm font-bold mb-2"
+        >Droit à l'image :</label
+      >
+      <input
+        type="checkbox"
+        id="id_rgpd_right"
+        name="rgpd_right"
+        class="mr-2 leading-tight"
+        checked="{{user_data.2}}"
+      />
+      <span class="text-gray-500 text-sm"
+        >J'accepte l'utilisation de mon image pour améliorer le modèle de
+        détection et d'identification.</span
+      >
+    </div>
+    <div class="flex flex-col items-center justify-between">
+      <button
+        class="bg-gray-800 hover:bg-black text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+        type="submit"
+      >
+        Sauvegarder
+      </button>
+    </div>
+  </form>
+</main>
+
+<script defer>
+
+  const form = document.getElementById("profile-form");
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const firstname = document.getElementById("id_firstname").value;
+    const lastname = document.getElementById("id_lastname").value;
+    const rgpd_right = document.getElementById("id_rgpd_right").checked;
+
+    await fetch("/profile", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        firstname: firstname,
+        lastname: lastname,
+        rgpd_right: rgpd_right,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        document.getElementById("dropdownMenuButton").textContent = data.firstname;
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  });
+
+</script>

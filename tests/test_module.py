@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch, MagicMock
-from app.endpoint import (
+from app.endpoints.endpoint import (
     predict_class_from_features,
     calculate_features_from_wrist,
 )

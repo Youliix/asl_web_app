@@ -1,13 +1,40 @@
+from flask import render_template, Blueprint, request, make_response, jsonify, session
+
 import pandas as pd
 import joblib
 import numpy as np
-import logging
 
 from .db import save_image_content
 
+
+prediction = Blueprint("prediction", __name__)
+
+
+@prediction.route("/predict", methods=["GET"])
+def prediction_page():
+    if "firstname" in session:
+        return render_template("index.html", main_template="./content/detection.html", firstname=session["firstname"])
+    return render_template("index.html", main_template="./content/detection.html")
+
+
+@prediction.route("/predict", methods=["POST"])
+def prediction_with_right():
+    try:
+        keypoints = request.form["keypoints"]
+        keypoints = eval(keypoints)
+        keypoints_features = calculate_features_from_wrist(keypoints)
+        prediction = predict_class_from_features(keypoints_features)
+        
+        if "rgpd_right" in session and session["rgpd_right"] == True:
+            img = request.files["image"]
+            save_content(img, keypoints, prediction, session["user_id"])
+    except Exception as e:
+        return make_response(jsonify({"error": e}), 500)
+    finally:
+        return jsonify({"letter": prediction})
+
+
 model = joblib.load("app/static/src/model/work/models/model_xgb_v2.pkl")
-
-
 class_names = [
     "A",
     "B",
@@ -89,5 +116,5 @@ def calculate_features_from_wrist(hand_landmarks):
     return {"angles": angles, "distances": distances, "keypoints": keypoints}
 
 
-def save_content(img, keypoints, prediction):
-    save_image_content(img, keypoints, prediction)
+def save_content(img, keypoints, prediction, user_id):
+    save_image_content(img, keypoints, prediction, user_id)

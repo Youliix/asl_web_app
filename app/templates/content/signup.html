@@ -1,0 +1,95 @@
+<main class="w-full h-full flex justify-center items-center">
+<form class="max-w-md mx-auto p-4 rounded-md border-4 border-gray-800" method="POST" onSubmit="onSubmit()">
+    <h1 class="text-2xl font-bold mb-4 text-center">Inscription</h1>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="mb-4 text-red-600">
+        {{ messages[0] }}. Aller à la <a href="{{ url_for('auth.login') }}"><span class="underline underline-offset-2">page de connexion<span></a>.
+    </div>
+    {% endif %}
+    {% endwith %}
+    <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="first_name">Prénom<span class="text-red-500">*</span></label>
+        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="first_name" type="text" placeholder="prénom" name="firstname" required>
+    </div>
+    <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="last_name">Nom<span class="text-red-500">*</span></label>
+        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="last_name" type="text" placeholder="nom" name="lastname" required>
+    </div>
+    <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="email">Email<span class="text-red-500">*</span></label>
+        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="email" type="email" placeholder="email" name="email" required>
+    </div>
+    <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="password">Mot de passe<span class="text-red-500">*</span></label>
+        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="password" type="password" placeholder="mot de passe" name="password" required>
+    </div>
+    <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="confirm_password">Confirmation de mot de passe<span class="text-red-500">*</span></label>
+        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="confirm_password" type="password" placeholder="confirmation de mot de passe" required oninput="checkPassword()">
+        <p id="password_error" class="text-red-500 hidden"></p>
+    </div>
+    <div class="mb-4">
+        <label class="flex items-center">
+            <input class="mr-2 leading-tight" type="checkbox" name="rgpd_right">
+            <span class="text-sm">
+                J'accepte de céder mon droit à l'image pour enrichir le modèle.
+                ps: modifiable à tout moment dans mon espace personnel.
+            </span>
+        </label>
+    </div>
+    <div class="flex items-center justify-center text-center">
+        <button class="bg-gray-800 border-2 border-transparent hover:bg-white hover:text-black hover:border-black text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Inscription</button>
+    </div>
+</form>
+</main>
+
+<script>
+
+    const checkPassword = () => {
+        let password = document.getElementById("password").value;
+        let confirm_password = document.getElementById("confirm_password").value;
+        let password_error = document.getElementById("password_error");
+        if (password !== confirm_password) {
+            password_error.classList.remove("hidden");
+            password_error.textContent = "Les mots de passe ne correspondent pas";
+        } else {
+            password_error.classList.add("hidden");
+            password_error.textContent = "";
+        }
+    }
+
+    const onSubmit = async (event) => {
+        event.preventDefault();
+
+        let firstname = document.getElementById("first_name").value;
+        let lastname = document.getElementById("last_name").value;
+        let email = document.getElementById("email").value;
+        let password = document.getElementById("password").value;
+        let rgpdCheckbox = document.querySelector('input[name="rgpd_right"]').checked;
+
+        await fetch("/signup", {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                firstname: firstname,
+                lastname: lastname,
+                email: email,
+                password: password,
+                rgpd_right: rgpdCheckbox
+            })
+        })
+        .then((response) => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error("Error: " + response.status);
+            }
+        })
+        .then((data) => console.log(data))
+        .catch((error) => console.log(error));
+    }
+
+</script>

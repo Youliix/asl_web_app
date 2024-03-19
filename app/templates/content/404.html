@@ -1,0 +1,17 @@
+
+
+<main class="flex flex-wrap justify-center items-center w-full h-full">
+    <div class="text-center">
+        <h1 class="text-4xl font-bold mb-4">Page non trouvée</h1>
+        <p class="text-lg mb-2">Désolé, la page que vous recherchez n'existe pas.</p>
+        <p class="text-lg mb-4">Vous allez être redirigé vers la page d'accueil dans quelques instants...</p>
+        <a href="/" class="text-blue-500 hover:underline">Retour à la page d'accueil</a>
+    </div>
+</main>
+
+
+<script defer>
+    setTimeout(function() {
+        window.location.href = "/";
+    }, 10000);
+</script>
