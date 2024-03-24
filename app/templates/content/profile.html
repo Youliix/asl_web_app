@@ -1,75 +1,184 @@
-<main class="flex flex-wrap justify-around items-center w-full h-full">
-  {% set user_data = user %}
-  <form
-    id="profile-form"
-    class="max-w-md min-w-80 mx-auto bg-white rounded-lg overflow-hidden shadow-md p-8 border-4 border-gray-800"
-  >
-    <h1 class="text-2xl font-bold mb-4 text-center">Profile</h1>
+{% set user_data = user %}
+<form
+  id="profile-form"
+  class="max-w-md min-w-80 mx-auto bg-white rounded-lg overflow-hidden shadow-md p-8 border-4 border-gray-800"
+>
+  <h1 class="text-2xl font-bold mb-4 text-center">Profile</h1>
 
-    <div class="mb-4">
-      <label
-        for="id_firstname"
-        class="block text-gray-700 text-sm font-bold mb-2"
-        >Prénom :</label
-      >
-      <input
-        type="text"
-        id="id_firstname"
-        name="firstname"
-        required
-        class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-        value="{{user_data.0}}"
-      />
-    </div>
+  <div class="mb-4">
+    <label for="id_firstname" class="block text-gray-700 text-sm font-bold mb-2"
+      >Prénom :</label
+    >
+    <input
+      type="text"
+      id="id_firstname"
+      name="firstname"
+      required
+      class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+      value="{{user_data.0}}"
+    />
+  </div>
 
-    <div class="mb-4">
-      <label
-        for="id_lastname"
-        class="block text-gray-700 text-sm font-bold mb-2"
-        >Nom :</label
-      >
-      <input
-        type="text"
-        id="id_lastname"
-        name="lastname"
-        required
-        class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-        value="{{user_data.1}}"
-      />
-    </div>
+  <div class="mb-4">
+    <label for="id_lastname" class="block text-gray-700 text-sm font-bold mb-2"
+      >Nom :</label
+    >
+    <input
+      type="text"
+      id="id_lastname"
+      name="lastname"
+      required
+      class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+      value="{{user_data.1}}"
+    />
+  </div>
 
-    <div class="mb-4">
-      <label
-        for="id_rgpd_right"
-        class="block text-gray-700 text-sm font-bold mb-2"
-        >Droit à l'image :</label
-      >
-      <input
-        type="checkbox"
-        id="id_rgpd_right"
-        name="rgpd_right"
-        class="mr-2 leading-tight"
-        checked="{{user_data.2}}"
-      />
-      <span class="text-gray-500 text-sm"
-        >J'accepte l'utilisation de mon image pour améliorer le modèle de
-        détection et d'identification.</span
-      >
-    </div>
-    <div class="flex flex-col items-center justify-between">
+  <div class="mb-4">
+    <label
+      for="id_rgpd_right"
+      class="block text-gray-700 text-sm font-bold mb-2"
+      >Droit à l'image :</label
+    >
+    <input
+      type="checkbox"
+      id="id_rgpd_right"
+      name="rgpd_right"
+      class="mr-2 leading-tight"
+      checked="{{user_data.2}}"
+    />
+    <span class="text-gray-500 text-sm"
+      >J'accepte l'utilisation de mon image pour améliorer le modèle de
+      détection et d'identification.</span
+    >
+  </div>
+
+  <div class="flex flex-col items-center justify-between">
+    <button
+      class="bg-gray-800 hover:bg-black text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+      type="submit"
+    >
+      Sauvegarder
+    </button>
+    <button
+      id="changePasswordButton"
+      type="button"
+      class="bg-blue-500 hover:bg-yellow-700 mt-4 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+    >
+      Changer le mot de passe
+    </button>
+    <button
+      id="deleteButton"
+      type="button"
+      class="mt-4 bg-red-500 hover:bg-violet-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+    >
+      Supprimer le compte
+    </button>
+  </div>
+</form>
+
+<div
+  id="confirmationModal"
+  class="fixed inset-0 bg-black bg-opacity-50 justify-center items-center"
+  style="display: none"
+>
+  <div class="bg-white rounded-lg p-6 m-4">
+    <p class="text-gray-800 text-lg mb-4">
+      Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est
+      irréversible.
+    </p>
+    <div class="flex justify-end">
       <button
-        class="bg-gray-800 hover:bg-black text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-        type="submit"
+        id="cancelButton"
+        class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded mr-2"
       >
-        Sauvegarder
+        Annuler
+      </button>
+      <button
+        id="confirmDeleteButton"
+        class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+        onclick="deleteAccount()"
+      >
+        Supprimer
       </button>
     </div>
-  </form>
-</main>
+  </div>
+</div>
+
+<div
+  id="passwordChangeModal"
+  class="fixed inset-0 bg-black bg-opacity-50 justify-center items-center"
+  style="display: none"
+>
+  <div class="bg-white rounded-lg p-6 m-4">
+    <form id="changePasswordForm" class="space-y-4">
+      <div>
+        <label
+          for="newPassword"
+          class="block text-gray-700 text-sm font-bold mb-2"
+          >Nouveau mot de passe :</label
+        >
+        <input
+          type="password"
+          id="newPassword"
+          name="newPassword"
+          required
+          class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+        />
+      </div>
+      <div>
+        <label
+          for="confirmPassword"
+          class="block text-gray-700 text-sm font-bold mb-2"
+          >Confirmez le nouveau mot de passe :</label
+        >
+        <input
+          type="password"
+          id="confirmPassword"
+          name="confirmPassword"
+          required
+          class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+        />
+      </div>
+      <div>
+        <label
+          for="oldPassword"
+          class="block text-gray-700 text-sm font-bold mb-2"
+          >Ancien mot de passe :</label
+        >
+        <input
+          type="password"
+          id="oldPassword"
+          name="oldPassword"
+          required
+          class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+        />
+      </div>
+      <div id="erreur-message" class="hidden text-red-800">Erreur de mot de passe</div>
+      <div class="flex justify-between items-center">
+        <button
+          type="button"
+          id="cancelPasswordChange"
+          class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+        >
+          Annuler
+        </button>
+        <button
+          type="button"
+          onclick="changePassword()"
+          class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+        >
+          Enregistrer
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
 
 <script defer>
 
   const form = document.getElementById("profile-form");
+
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -90,11 +199,80 @@
     })
       .then((response) => response.json())
       .then((data) => {
-        document.getElementById("dropdownMenuButton").textContent = data.firstname;
+        document.getElementById("dropdownMenuButton").textContent =
+          data.firstname;
       })
       .catch((error) => {
         console.error("Error:", error);
       });
   });
+
+  document
+    .getElementById("deleteButton")
+    .addEventListener("click", function () {
+      document.getElementById("confirmationModal").style.display = "flex";
+    });
+
+  document
+    .getElementById("cancelButton")
+    .addEventListener("click", function () {
+      document.getElementById("confirmationModal").style.display = "none";
+    });
+
+  document
+    .getElementById("changePasswordButton")
+    .addEventListener("click", function () {
+      document.getElementById("passwordChangeModal").style.display = "flex";
+    });
+
+  document
+    .getElementById("cancelPasswordChange")
+    .addEventListener("click", function () {
+      document.getElementById("passwordChangeModal").style.display = "none";
+      document.getElementById("erreur-message").classList.add("hidden");
+    });
+
+  const changePassword = async () => {
+    const oldPassword = document.getElementById("oldPassword").value;
+    const newPassword = document.getElementById("newPassword").value;
+      await fetch("/profile/password", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          oldPassword: oldPassword,
+          newPassword: newPassword,
+        }),
+      })
+        .then((response) => {
+          const errorMessage = document.getElementById("erreur-message");
+          if(response.status === 200) {
+            document.getElementById("passwordChangeModal").style.display = "none";
+          }
+          if(response.status === 400) {
+            console.error("Error:", response);
+            errorMessage.classList.remove("hidden");
+          }
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+    };
+
+  const deleteAccount = async () => {
+    await fetch("/profile", {
+      method: "DELETE",
+    })
+      .then((response) => {
+        response.json();
+      })
+      .then((data) => {
+        window.location.href = "/";
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  };
 
 </script>

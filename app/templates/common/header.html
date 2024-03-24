@@ -1,48 +1,125 @@
-<header class="bg-gray-800 text-white p-4 text-center w-full">
-  <div class="flex flex-col md:flex-row justify-between items-center relative"> 
-    <div class="hidden md:block"> 
-      <a href='/'>
-        <i class="fas fa-home mr-1 border border-white p-1 rounded-sm"></i>
-      </a>
-    </div>
-    <h1 class="text-sm underline underline-offset-2 absolute left-1/2 transform -translate-x-1/2 max-w-xs">
-      <a href='/' class="text-white md:text-xl hover:text-black hover:bg-white rounded-md p-1">ASL sign detection web application</a>
-    </h1>
-    <div class="mt-4 md:mt-0 flex md:flex-col justify-end"> 
-      <div class="md:hidden">
-        <button class="text-white hover:bg-white hover:text-black p-2 rounded-sm">
+<div
+  class="flex flex-col md:flex-row justify-between md:items-center items-end relative"
+>
+  <div class="hidden md:block">
+    <a href="/" class="h-7 w-6">
+      <i
+        class="fas fa-home mr-1 underline underline-offset-2 p-1 rounded-sm"
+      ></i>
+    </a>
+  </div>
+  <h1
+    class="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2"
+  >
+    <a
+      href="/"
+      class="text-white md:text-lg text-sm w-20 hover:text-black hover:bg-white rounded-md p-1 underline underline-offset-2"
+      >ASL sign detection web application</a
+    >
+  </h1>
+  <div class="mt-0 flex justify-end items-center md:flex-col">
+    <div class="lg:hidden relative">
+      {% if firstname %}
+        <button 
+          id="dropdownMenuButtonMobile"
+          class="text-white hover:bg-white hover:text-black p-2 rounded-sm"
+          data-toggle="dropdown"
+          aria-haspopup="true"
+          aria-expanded="false"
+          >
           <i class="fas fa-bars"></i>
         </button>
-      </div>
-      {% if firstname %}
-      <div class="hidden md:flex flex-grow justify-end">
-        <div class="dropdown relative">
-          <button class="text-white hover:bg-white hover:text-black p-2 rounded-sm dropdown-toggle flex items-center" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            {{ firstname }}
-          </button>
-          <div class="dropdown-menu absolute hidden mt-2 w-48 right-0 rounded-lg shadow-lg bg-white ring-1 ring-black ring-opacity-5" aria-labelledby="dropdownMenuButton">
-            <a href="/profile" class="dropdown-item block px-4 py-2 text-sm text-gray-700 hover:bg-gray-800 hover:text-white">Profil</a>
-            <a href="/logout" class="dropdown-item block px-4 py-2 text-sm text-gray-700 hover:bg-gray-800 hover:text-white">Déconnexion</a>
-          </div>
+        <div 
+          id="dropdownMenu" 
+          class="dropdown-menu-mobile absolute hidden mt-2 w-48 right-0 rounded-lg shadow-lg bg-white ring-1 ring-black ring-opacity-5"
+          aria-labelledby="dropdownMenuButtonMobile"
+        >
+        <a href="/profile" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-800 hover:text-white">Profil</a>
+        <a href="/logout" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-800 hover:text-white">Déconnexion</a>
+        </div>
+      {% else %}
+      <button 
+      id="dropdownMenuButtonMobile"
+      class="text-white hover:bg-white hover:text-black p-2 rounded-sm"
+      data-toggle="dropdown"
+      aria-haspopup="true"
+      aria-expanded="false"
+      >
+      <i class="fas fa-bars"></i>
+    </button>
+    <div 
+      id="dropdownMenu" 
+      class="dropdown-menu-mobile absolute hidden mt-2 w-48 right-0 rounded-lg shadow-lg bg-white ring-1 ring-black ring-opacity-5"
+      aria-labelledby="dropdownMenuButtonMobile"
+    >
+    <a href="/login" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-800 hover:text-white">Connexion</a>
+    <a href="/signup" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-800 hover:text-white">Inscription</a>
+    </div>
+      {% endif %}
+    </div>
+    {% if firstname %}
+    <div class="hidden lg:flex flex-grow justify-end">
+      <div class="dropdown relative">
+        <button
+          class="text-white hover:bg-white hover:text-black p-2 rounded-sm dropdown-toggle flex items-center"
+          type="button"
+          id="dropdownMenuButton"
+          data-toggle="dropdown"
+          aria-haspopup="true"
+          aria-expanded="false"
+        > 
+          {{ firstname }}
+        </button>
+        <div
+          class="dropdown-menu absolute hidden mt-2 w-48 right-0 rounded-lg shadow-lg bg-white ring-1 ring-black ring-opacity-5"
+          aria-labelledby="dropdownMenuButton"
+        >
+          <a
+            href="/profile"
+            class="dropdown-item block px-4 py-2 text-sm text-gray-700 hover:bg-gray-800 hover:text-white"
+            >Profil</a
+          >
+          <a
+            href="/logout"
+            class="dropdown-item block px-4 py-2 text-sm text-gray-700 hover:bg-gray-800 hover:text-white"
+            >Déconnexion</a
+          >
         </div>
       </div>
-    {% else %}
-      <div class="hidden md:flex flex-grow justify-end">
-        <a href="/login" class="text-white mr-4 hover:bg-white hover:text-black p-2 rounded-sm">Connexion</a>
-        <a href="/signup" class="text-white hover:bg-white hover:text-black p-2 rounded-sm">Inscription</a>
-      </div>
-    {% endif %}
     </div>
+    {% else %}
+    <div class="hidden lg:flex flex-grow justify-end">
+      <a
+        href="/login"
+        class="text-white mr-4 hover:bg-white hover:text-black p-2 rounded-sm"
+        >Connexion</a
+      >
+      <a
+        href="/signup"
+        class="text-white hover:bg-white hover:text-black p-2 rounded-sm"
+        >Inscription</a
+      >
+    </div>
+    {% endif %}
   </div>
-</header>
+</div>
 
 <script>
-  const dropdown = document.getElementById('dropdownMenuButton');
+  const dropdown = document.getElementById("dropdownMenuButton");
+  const dropdownMobile = document.getElementById("dropdownMenuButtonMobile");
   if (dropdown) {
-    dropdown.addEventListener('click', function() {
-      const dropdownMenu = document.querySelector('.dropdown-menu');
+    dropdown.addEventListener("click", function () {
+      const dropdownMenu = document.querySelector(".dropdown-menu");
       if (dropdownMenu) {
-        dropdownMenu.classList.toggle('hidden');
+        dropdownMenu.classList.toggle("hidden");
+      }
+    });
+  }
+  if (dropdownMobile) {
+    dropdownMobile.addEventListener("click", function () {
+      const dropdownMenu = document.querySelector(".dropdown-menu-mobile");
+      if (dropdownMenu) {
+        dropdownMenu.classList.toggle("hidden");
       }
     });
   }

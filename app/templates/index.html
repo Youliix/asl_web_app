@@ -8,11 +8,16 @@
     <link rel="stylesheet" href="{{url_for('static',filename='../static/dist/css/output.css')}}">
     <link rel="icon" href="{{ url_for('static', filename='./images/sign.png') }}" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-  </head>
-<div class="flex flex-col h-screen md:min-h-screen w-full">
-  {% include './common/header.html' %}
-  {% include main_template %}
-  {% include './common/footer.html' %}
-</div>
+</head>
+<body class="flex flex-col h-screen justify-center items-center w-full">
+  <header class="bg-gray-800 text-white p-5 text-center h-20 w-full">
+    {% include './common/header.html' %}
+  </header>
+  <main class="flex flex-row justify-center items-center w-full" style="height: calc(100vh - 9rem);">
+    {% include main_template %}
+  </main>
+  <footer class="bg-gray-800 text-white p-4 h-16 w-full">
+    {% include './common/footer.html' %}
+  </footer>
 </body>
 </html>
