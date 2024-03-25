@@ -1,4 +1,5 @@
 from dotenv import load_dotenv
+
 load_dotenv()
 
 import os
@@ -17,12 +18,13 @@ from .error import error
 
 from . import cron_job
 
+
 def create_app(test_config=None):
-    
+
     app = Flask(__name__, instance_relative_config=True)
-    CORS(app, resources={r'/*': {'origins': 'http://127.0.0.1:8000'}})
-    
-    app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
+    CORS(app, resources={r"/*": {"origins": "http://127.0.0.1:8000"}})
+
+    app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 
     db.check_db_connection()
     db.db_init()

@@ -13,7 +13,11 @@ prediction = Blueprint("prediction", __name__)
 @prediction.route("/predict", methods=["GET"])
 def prediction_page():
     if "firstname" in session:
-        return render_template("index.html", main_template="./content/detection.html", firstname=session["firstname"])
+        return render_template(
+            "index.html",
+            main_template="./content/detection.html",
+            firstname=session["firstname"],
+        )
     return render_template("index.html", main_template="./content/detection.html")
 
 
@@ -24,7 +28,7 @@ def prediction_with_right():
         keypoints = eval(keypoints)
         keypoints_features = calculate_features_from_wrist(keypoints)
         prediction = predict_class_from_features(keypoints_features)
-        
+
         if "rgpd_right" in session and session["rgpd_right"] == True:
             img = request.files["image"]
             save_content(img, keypoints, prediction, session["user_id"])
@@ -80,10 +84,10 @@ def calculate_features_from_wrist(hand_landmarks):
     wrist = np.array([hand_landmarks[0]["x"], hand_landmarks[0]["y"]])
     angles = []
     distances = []
-    
+
     for i in range(1, len(hand_landmarks)):
         keypoint = np.array([hand_landmarks[i]["x"], hand_landmarks[i]["y"]])
-    
+
         vector_2d = keypoint[:2] - wrist[:2]
         angle_rad = np.arctan2(vector_2d[1], vector_2d[0])
         angle_deg = np.degrees(angle_rad)

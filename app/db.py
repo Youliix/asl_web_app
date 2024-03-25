@@ -79,7 +79,7 @@ def update_user(user):
     try:
         cursor.execute(
             "UPDATE users SET firstname = %s, lastname = %s, rgpd_right = %s WHERE id = %s",
-            (user['firstname'], user['lastname'], user['rgpd_right'], user['id']),
+            (user["firstname"], user["lastname"], user["rgpd_right"], user["id"]),
         )
         connection.commit()
     except (Exception, psycopg2.Error) as error:
@@ -130,18 +130,21 @@ def update_password(data):
     connection = get_db_connection()
     cursor = connection.cursor()
     try:
-        user = get_user_pwd(data['id'])
-        if not check_password_hash(user, data['oldPassword']):
+        user = get_user_pwd(data["id"])
+        if not check_password_hash(user, data["oldPassword"]):
             return {"error": "Mot de passe est incorrect.", "code": 400}
         cursor.execute(
             "UPDATE users SET password = %s WHERE id = %s",
-            (generate_password_hash(data['newPassword']), data['id']),
+            (generate_password_hash(data["newPassword"]), data["id"]),
         )
         connection.commit()
         return {"message": "Mot de passe mis à jour.", "code": 200}
     except (Exception, psycopg2.Error) as error:
         logging.warning("Error while connecting to PostgreSQL", error)
-        return {"error": "Une erreur est survenue lors de la mise à jour du mot de passe.", "code": 500}
+        return {
+            "error": "Une erreur est survenue lors de la mise à jour du mot de passe.",
+            "code": 500,
+        }
     finally:
         cursor.close()
         connection.close()

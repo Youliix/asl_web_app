@@ -137,8 +137,10 @@
           name="confirmPassword"
           required
           class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          oninput="checkPassword()"
         />
       </div>
+      <p id="passwordError" class="text-red-500 text-xs"></p>
       <div>
         <label
           for="oldPassword"
@@ -174,8 +176,19 @@
   </div>
 </div>
 
-
 <script defer>
+  const checkPassword = () => {
+    let password = document.getElementById("newPassword").value;
+    let confirm_password = document.getElementById("confirmPassword").value;
+    let password_error = document.getElementById("passwordError");
+    if (password !== confirm_password) {
+      password_error.classList.remove("hidden");
+      password_error.textContent = "Les mots de passe ne correspondent pas";
+    } else {
+      password_error.classList.add("hidden");
+      password_error.textContent = "";
+    }
+  };
 
   const form = document.getElementById("profile-form");
 
@@ -235,30 +248,30 @@
   const changePassword = async () => {
     const oldPassword = document.getElementById("oldPassword").value;
     const newPassword = document.getElementById("newPassword").value;
-      await fetch("/profile/password", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          oldPassword: oldPassword,
-          newPassword: newPassword,
-        }),
+    await fetch("/profile/password", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        oldPassword: oldPassword,
+        newPassword: newPassword,
+      }),
+    })
+      .then((response) => {
+        const errorMessage = document.getElementById("erreur-message");
+        if (response.status === 200) {
+          document.getElementById("passwordChangeModal").style.display = "none";
+        }
+        if (response.status === 400) {
+          console.error("Error:", response);
+          errorMessage.classList.remove("hidden");
+        }
       })
-        .then((response) => {
-          const errorMessage = document.getElementById("erreur-message");
-          if(response.status === 200) {
-            document.getElementById("passwordChangeModal").style.display = "none";
-          }
-          if(response.status === 400) {
-            console.error("Error:", response);
-            errorMessage.classList.remove("hidden");
-          }
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
-    };
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  };
 
   const deleteAccount = async () => {
     await fetch("/profile", {
@@ -274,5 +287,4 @@
         console.error("Error:", error);
       });
   };
-
 </script>

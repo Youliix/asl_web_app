@@ -3,7 +3,7 @@ from typing import List, Optional
 
 
 @dataclass
-class User():
+class User:
     id: int
     firstname: str
     lastname: str
@@ -13,7 +13,7 @@ class User():
 
 
 @dataclass
-class Image():
+class Image:
     image: bytes
     keypoint: List[float]
     label: str

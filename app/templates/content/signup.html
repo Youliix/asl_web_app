@@ -1,4 +1,4 @@
-<form class="max-w-md mx-auto p-4 rounded-md border-4 border-gray-800" method="POST" onSubmit="onSubmit()">
+<form class="max-w-md mx-auto p-4 rounded-md border-4 border-gray-800" method="POST" action="{{ url_for('auth.signup') }}" onSubmit="onSubmit()">
     <h1 class="text-2xl font-bold mb-4 text-center">Inscription</h1>
     {% with messages = get_flashed_messages() %}
     {% if messages %}
@@ -67,7 +67,7 @@
         let rgpdCheckbox = document.querySelector('input[name="rgpd_right"]').checked;
 
         await fetch("/signup", {
-            method: "PUT",
+            method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },

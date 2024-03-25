@@ -1,19 +1,27 @@
-
-<div class="flex flex-col lg:flex-row justify-around items-center w-full h-full overflow-y-auto">
+<div
+  class="flex flex-col lg:flex-row justify-around items-center w-full h-full"
+>
   <div class="w-full lg:w-1/3 px-4 py-2 flex justify-center items-center">
-    <div class="flex justify-center items-center" style="min-height: 380px;">
-      <img class="h-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-full object-cover" src="{{ url_for('static', filename='images/asl_signs_old.png') }}" alt="ASL Signs"/>
+    <div class="flex justify-center items-center" style="min-height: 180px">
+      <img
+        class="h-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-full object-cover"
+        src="{{ url_for('static', filename='images/asl_signs_old.png') }}"
+        alt="ASL Signs"
+      />
     </div>
   </div>
-  <div class="w-full lg:w-1/3 px-4 py-2 flex justify-center items-center relative">
-    <i class="fas fa-spinner fa-spin text-4xl text-gray-500 absolute"></i>
-    <div class="flex justify-center items-center relative" style="min-height: 380px;">
-      <video id="video" autoplay class="h-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-full object-cover relative" muted style="width: auto;"></video>
-      <canvas id="canvas" class="absolute top-0 left-0 w-full h-full"></canvas>
+  <div class="flex justify-center items-center">
+    <div
+      class="w-full max-w-3xl px-4 py-2 flex justify-center items-center relative"
+    >
+      <i class="fas fa-spinner fa-spin text-4xl text-gray-500 absolute"></i>
+      <div class="flex justify-center items-center w-full relative">
+        <video id="video" autoplay class="aspect-video w-full" muted></video>
+        <canvas id="canvas" class="absolute top-0 left-0 aspect-video"></canvas>
+      </div>
     </div>
   </div>
 </div>
-
 
 <script
   type="module"

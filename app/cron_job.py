@@ -3,8 +3,10 @@ import time
 
 from . import monitoring
 
+
 def job():
     monitoring.send_email(monitoring.collect_metrics())
+
 
 def run_scheduler():
 

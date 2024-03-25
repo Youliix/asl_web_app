@@ -195,4 +195,3 @@ class TestCalculateFeaturesFromWrist(unittest.TestCase):
         self.assertGreater(len(features["distances"]), 0)
         self.assertIn("keypoints", features)
         self.assertGreater(len(features["keypoints"]), 0)
-
