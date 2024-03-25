@@ -13,13 +13,12 @@
   <div class="flex justify-center items-center">
     <div class="w-full max-w-3xl px-4 py-2 flex justify-center items-center relative">
       <i class="fas fa-spinner fa-spin text-4xl text-blue-700 absolute"></i>
-      <div class="flex justify-center items-center w-full relative">
-        <video id="video" autoplay class="aspect-video w-full" muted></video>
-        <canvas id="canvas" class="absolute top-0 left-0 h-[300px] sm:h-[200px] aspect-video"></canvas>
+      <div class="flex justify-center items-center relative max-w-[480px] aspect-video">
+        <video id="video" autoplay muted></video>
+        <canvas id="canvas" class="absolute top-0 left-0"></canvas>
       </div>
     </div>
   </div>
-  
 </div>
 
 <script
