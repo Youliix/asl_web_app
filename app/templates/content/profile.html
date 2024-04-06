@@ -45,7 +45,7 @@
       id="id_rgpd_right"
       name="rgpd_right"
       class="mr-2 leading-tight"
-      checked="{{user_data.2}}"
+      {% if user_data.2 %}checked{% endif %}
     />
     <span class="text-gray-500 text-sm"
       >J'accepte l'utilisation de mon image pour améliorer le modèle de

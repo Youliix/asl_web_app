@@ -17,9 +17,9 @@ def login():
             user = cur.fetchone()
 
         if user and check_password_hash(user[4], password):
+            session["user_id"] = user[0]
             session["firstname"] = user[1]
             session["rgpd_right"] = user[5]
-            session["user_id"] = user[0]
             return redirect(url_for("main.index"))
         else:
             flash("L'utilisateur n'existe pas ou le mot de passe est incorrect")
@@ -35,7 +35,7 @@ def signup():
         firstname = request.form.get("firstname", None)
         lastname = request.form.get("lastname", None)
         password = request.form.get("password", None)
-        rgpd_right = request.form.get("rgpd_right", None) is not None
+        rgpd_right = bool(request.form.get("rgpd_right"))
 
         with db.get_db_connection() as conn:
             cur = conn.cursor()

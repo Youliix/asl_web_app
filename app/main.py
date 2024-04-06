@@ -3,7 +3,6 @@ from . import db
 
 main = Blueprint("main", __name__)
 
-
 @main.route("/")
 def index():
     if "firstname" in session:
@@ -20,8 +19,7 @@ def index():
 def profile():
     if request.method == "PUT":
         data = request.get_json()
-
-        data["rgpd_right"] = request.form.get("rgpd_right", None) is not None
+        data["rgpd_right"] = bool(data.get("rgpd_right"))
         data["id"] = session["user_id"]
 
         db.update_user(data)
