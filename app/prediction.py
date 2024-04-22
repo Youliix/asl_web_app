@@ -3,6 +3,8 @@ from flask import render_template, Blueprint, request, make_response, jsonify, s
 import pandas as pd
 import joblib
 import numpy as np
+import ast
+import logging
 
 from .db import save_image_content
 
@@ -25,7 +27,8 @@ def prediction_page():
 def prediction_with_right():
     try:
         keypoints = request.form["keypoints"]
-        keypoints = eval(keypoints)
+        keypoints = ast.literal_eval(keypoints)
+        
         keypoints_features = calculate_features_from_wrist(keypoints)
         prediction = predict_class_from_features(keypoints_features)
 
@@ -33,7 +36,8 @@ def prediction_with_right():
             img = request.files["image"]
             save_content(img, keypoints, prediction, session["user_id"])
     except Exception as e:
-        return make_response(jsonify({"error": e}), 500)
+        logging.error(f"Une erreur s'est produite : {e}", exc_info=True)
+        return make_response(jsonify({"error": "Une erreur s'est produite. Veuillez contacter l'administrateur."}), 500)
     finally:
         return jsonify({"letter": prediction})
 
